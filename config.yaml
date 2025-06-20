@@ -1,0 +1,117 @@
+# Vertex AI Agent Configuration
+agent:
+  name: "vertex-ai-pipeline-agent"
+  version: "1.0.0"
+  description: "Gemini-powered agent for autonomous ML pipeline generation"
+
+# Google Cloud Platform Configuration
+gcp:
+  project_id: "${GCP_PROJECT_ID}"
+  region: "${GCP_REGION:-us-central1}"
+  zone: "${GCP_ZONE:-us-central1-a}"
+  
+  # Vertex AI Configuration
+  vertex_ai:
+    location: "${VERTEX_AI_LOCATION:-us-central1}"
+    staging_bucket: "${VERTEX_AI_STAGING_BUCKET}"
+    service_account: "${VERTEX_AI_SERVICE_ACCOUNT}"
+    
+  # BigQuery Configuration
+  bigquery:
+    dataset_location: "${BIGQUERY_LOCATION:-US}"
+    
+  # Artifact Registry Configuration
+  artifact_registry:
+    repository: "${ARTIFACT_REGISTRY_REPO:-ml-pipelines}"
+    location: "${ARTIFACT_REGISTRY_LOCATION:-us-central1}"
+
+# Gemini Configuration
+gemini:
+  model: "gemini-pro"
+  temperature: 0.1
+  max_tokens: 8192
+  safety_settings:
+    - category: "HARM_CATEGORY_HARASSMENT"
+      threshold: "BLOCK_MEDIUM_AND_ABOVE"
+    - category: "HARM_CATEGORY_HATE_SPEECH"
+      threshold: "BLOCK_MEDIUM_AND_ABOVE"
+    - category: "HARM_CATEGORY_SEXUALLY_EXPLICIT"
+      threshold: "BLOCK_MEDIUM_AND_ABOVE"
+    - category: "HARM_CATEGORY_DANGEROUS_CONTENT"
+      threshold: "BLOCK_MEDIUM_AND_ABOVE"
+
+# Pipeline Configuration
+pipeline:
+  # Default pipeline settings
+  defaults:
+    machine_type: "n1-standard-4"
+    disk_size_gb: 100
+    python_version: "3.9"
+    
+  # Supported ML frameworks
+  frameworks:
+    - name: "scikit-learn"
+      container_uri: "gcr.io/deeplearning-platform-release/sklearn-cpu"
+    - name: "xgboost"
+      container_uri: "gcr.io/deeplearning-platform-release/xgboost-cpu"
+    - name: "tensorflow"
+      container_uri: "gcr.io/deeplearning-platform-release/tf2-cpu"
+    - name: "pytorch"
+      container_uri: "gcr.io/deeplearning-platform-release/pytorch-cpu"
+      
+  # Pipeline templates
+  templates:
+    classification:
+      type: "binary_classification"
+      metrics: ["accuracy", "precision", "recall", "f1_score", "auc"]
+    regression:
+      type: "regression"
+      metrics: ["mse", "rmse", "mae", "r2_score"]
+    clustering:
+      type: "clustering"
+      metrics: ["silhouette_score", "calinski_harabasz_score"]
+
+# Monitoring Configuration
+monitoring:
+  # Model monitoring settings
+  model_monitoring:
+    enable_drift_detection: true
+    drift_threshold: 0.1
+    monitoring_frequency: "daily"
+    
+  # Performance monitoring
+  performance_monitoring:
+    enable_performance_tracking: true
+    performance_threshold: 0.05
+    
+  # Data quality monitoring
+  data_quality:
+    enable_data_validation: true
+    schema_validation: true
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "json"
+  handlers:
+    - type: "console"
+    - type: "cloud_logging"
+      
+# Agent Behavior Configuration
+agent_behavior:
+  # Conversation settings
+  conversation:
+    max_turns: 10
+    context_window: 4000
+    
+  # Pipeline generation settings
+  pipeline_generation:
+    auto_optimize: true
+    include_monitoring: true
+    include_cicd: true
+    
+  # Safety and validation
+  validation:
+    validate_sql_queries: true
+    validate_pipeline_configs: true
+    require_approval_for_deployment: false
